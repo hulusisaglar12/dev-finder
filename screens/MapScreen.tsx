@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { View, TouchableOpacity, Text, Image, StyleSheet } from 'react-native';
-import MapView, { Marker, Callout } from 'react-native-maps';
+import MapView, { Marker, Callout, LatLng } from 'react-native-maps';
+import * as Location from 'expo-location';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Developer, RootStackParamList } from '../types';
@@ -10,17 +11,55 @@ type Props = {
   navigation: NativeStackNavigationProp<RootStackParamList, 'Map'>;
 };
 
-export default function MapScreen({ navigation }: Props) {
-  const [devs, setDevs] = useState<Developer[]>([]);
+const DEFAULT_REGION = {
+  latitude: 37.79,
+  longitude: -122.40,
+  latitudeDelta: 0.1,
+  longitudeDelta: 0.1,
+};
 
+export default function MapScreen({ navigation }: Props) {
+  const mapRef = useRef<MapView>(null);
+  const [devs, setDevs] = useState<Developer[]>([]);
+  const [mapReady, setMapReady] = useState(false);
+  const [initialRegion, setInitialRegion] = useState(DEFAULT_REGION);
+
+  // Set initial region from device GPS
+  useEffect(() => {
+    Location.requestForegroundPermissionsAsync().then(({ status }) => {
+      if (status === 'granted') {
+        Location.getCurrentPositionAsync().then(({ coords }) => {
+          setInitialRegion({
+            latitude: coords.latitude,
+            longitude: coords.longitude,
+            latitudeDelta: 0.1,
+            longitudeDelta: 0.1,
+          });
+        });
+      }
+    });
+  }, []);
+
+  // Fetch devs from backend
   useEffect(() => {
     fetch(`${API_URL}/users`)
       .then((r) => r.json())
       .then((data: Developer[]) => setDevs(data))
-      .catch(() => {
-        // Backend not running — map stays empty; no crash
-      });
+      .catch(() => {});
   }, []);
+
+  // Fit map to all pins once both map and data are ready
+  useEffect(() => {
+    if (!mapReady || devs.length === 0) return;
+    const coords: LatLng[] = devs.map((d) => ({
+      latitude: d.latitude,
+      longitude: d.longitude,
+    }));
+    mapRef.current?.fitToCoordinates(coords, {
+      edgePadding: { top: 128, right: 64, bottom: 64, left: 64 },
+      animated: true,
+    });
+  }, [mapReady, devs]);
 
   const handleLogout = async () => {
     await AsyncStorage.removeItem('@username');
@@ -30,20 +69,24 @@ export default function MapScreen({ navigation }: Props) {
   return (
     <View style={styles.container}>
       <MapView
-        style={StyleSheet.absoluteFillObject}
-        initialRegion={{
-          latitude: 37.79,
-          longitude: -122.40,
-          latitudeDelta: 0.05,
-          longitudeDelta: 0.05,
-        }}
+        ref={mapRef}
+        style={styles.map}
+        initialRegion={initialRegion}
+        onMapReady={() => setMapReady(true)}
+        showsUserLocation
+        moveOnMarkerPress={false}
+        toolbarEnabled={false}
       >
         {devs.map((dev) => (
           <Marker
             key={String(dev.id)}
             coordinate={{ latitude: dev.latitude, longitude: dev.longitude }}
           >
-            <Image source={{ uri: dev.avatarUrl }} style={styles.avatar} />
+            <Image
+              source={{ uri: dev.avatarUrl }}
+              style={styles.avatar}
+              resizeMode="contain"
+            />
             <Callout
               onPress={() =>
                 navigation.navigate('Profile', { username: dev.username })
@@ -72,15 +115,19 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  // KEY FIX: flex:1 instead of absoluteFillObject so Android computes height correctly
+  map: {
+    flex: 1,
+  },
   avatar: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    borderWidth: 2,
-    borderColor: '#fff',
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    borderWidth: 4,
+    borderColor: '#E8EAED',
   },
   callout: {
-    width: 200,
+    width: 220,
     padding: 8,
   },
   calloutName: {
@@ -100,17 +147,13 @@ const styles = StyleSheet.create({
   },
   logoutButton: {
     position: 'absolute',
-    top: 48,
-    right: 16,
-    backgroundColor: '#ef4444',
+    top: 64,
+    right: 24,
+    backgroundColor: '#031A62',
     paddingHorizontal: 16,
     paddingVertical: 8,
-    borderRadius: 8,
+    borderRadius: 4,
     elevation: 3,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3,
   },
   logoutText: {
     color: '#fff',
