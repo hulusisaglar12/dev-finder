@@ -4,63 +4,22 @@ import MapView, { Marker, Callout } from 'react-native-maps';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Developer, RootStackParamList } from '../types';
+import { API_URL } from '../src/config';
 
 type Props = {
   navigation: NativeStackNavigationProp<RootStackParamList, 'Map'>;
 };
 
-// Seeded from db.json — coordinates are in San Francisco
-const SEED_DEVS: Developer[] = [
-  {
-    id: 1,
-    username: 'torvalds',
-    name: 'Linus Torvalds',
-    bio: null,
-    latitude: 37.78796109088732,
-    longitude: -122.41171214729549,
-  },
-  {
-    id: 2,
-    username: 'timbl',
-    name: 'Tim Berners-Lee',
-    bio: null,
-    latitude: 37.79282406698407,
-    longitude: -122.39881340414287,
-  },
-  {
-    id: 3,
-    username: 'gvanrossum',
-    name: 'Guido van Rossum',
-    bio: null,
-    latitude: 37.790605642105255,
-    longitude: -122.39324949681759,
-  },
-];
-
-const INITIAL_REGION = {
-  latitude: 37.79,
-  longitude: -122.40,
-  latitudeDelta: 0.05,
-  longitudeDelta: 0.05,
-};
-
 export default function MapScreen({ navigation }: Props) {
-  const [devs, setDevs] = useState<Developer[]>(SEED_DEVS);
+  const [devs, setDevs] = useState<Developer[]>([]);
 
-  // Enrich seeded devs with live bio from GitHub API
   useEffect(() => {
-    Promise.all(
-      SEED_DEVS.map((dev) =>
-        fetch(`https://api.github.com/users/${dev.username}`)
-          .then((r) => r.json())
-          .then((data) => ({
-            ...dev,
-            name: (data.name as string | null) ?? dev.name,
-            bio: (data.bio as string | null) ?? null,
-          }))
-          .catch(() => dev),
-      ),
-    ).then(setDevs);
+    fetch(`${API_URL}/users`)
+      .then((r) => r.json())
+      .then((data: Developer[]) => setDevs(data))
+      .catch(() => {
+        // Backend not running — map stays empty; no crash
+      });
   }, []);
 
   const handleLogout = async () => {
@@ -70,16 +29,13 @@ export default function MapScreen({ navigation }: Props) {
 
   return (
     <View style={styles.container}>
-      <MapView style={StyleSheet.absoluteFillObject} initialRegion={INITIAL_REGION}>
+      <MapView style={StyleSheet.absoluteFillObject}>
         {devs.map((dev) => (
           <Marker
             key={dev.id}
             coordinate={{ latitude: dev.latitude, longitude: dev.longitude }}
           >
-            <Image
-              source={{ uri: `https://github.com/${dev.username}.png` }}
-              style={styles.avatar}
-            />
+            <Image source={{ uri: dev.avatarUrl }} style={styles.avatar} />
             <Callout
               onPress={() =>
                 navigation.navigate('Profile', { username: dev.username })

@@ -6,7 +6,8 @@
     "start": "expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
-    "web": "expo start --web"
+    "web": "expo start --web",
+    "backend": "json-server --watch db.json --port 3000"
   },
   "dependencies": {
     "@expo/webpack-config": "^0.17.2",
@@ -14,6 +15,7 @@
     "@react-navigation/native": "^6.1.18",
     "@react-navigation/native-stack": "^6.11.0",
     "expo": "~47.0.12",
+    "expo-location": "~15.0.1",
     "expo-status-bar": "~1.4.2",
     "react": "18.1.0",
     "react-dom": "18.1.0",
@@ -28,6 +30,7 @@
     "@babel/core": "^7.12.9",
     "@types/react": "~18.0.14",
     "@types/react-native": "~0.70.6",
+    "json-server": "^1.0.0-beta.15",
     "typescript": "^4.6.3"
   },
   "private": true

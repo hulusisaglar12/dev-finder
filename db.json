@@ -1,52 +1,31 @@
 {
   "users": [
     {
-      "login": "torvalds",
-      "avatar_url": "https://avatars.githubusercontent.com/u/1024025?v=4",
-      "bio": null,
-      "company": "Linux Foundation",
+      "id": 1,
+      "username": "torvalds",
       "name": "Linus Torvalds",
-      "coordinates": {
-        "latitude": 37.78796109088732,
-        "longitude": -122.41171214729549
-      },
-      "id": 1
+      "bio": null,
+      "avatarUrl": "https://avatars.githubusercontent.com/u/1024025?v=4",
+      "latitude": 37.78796109088732,
+      "longitude": -122.41171214729549
     },
     {
-      "login": "timbl",
-      "avatar_url": "https://avatars.githubusercontent.com/u/1254848?v=4",
-      "bio": null,
-      "company": "MIT",
+      "id": 2,
+      "username": "timbl",
       "name": "Tim Berners-Lee",
-      "coordinates": {
-        "latitude": 37.79282406698407,
-        "longitude": -122.39881340414287
-      },
-      "id": 2
+      "bio": null,
+      "avatarUrl": "https://avatars.githubusercontent.com/u/1254848?v=4",
+      "latitude": 37.79282406698407,
+      "longitude": -122.39881340414287
     },
     {
-      "login": "gvanrossum",
-      "avatar_url": "https://avatars.githubusercontent.com/u/2894642?v=4",
-      "bio": null,
-      "company": "Microsoft",
+      "id": 3,
+      "username": "gvanrossum",
       "name": "Guido van Rossum",
-      "coordinates": {
-        "latitude": 37.790605642105255,
-        "longitude": -122.39324949681759
-      },
-      "id": 3
-    },
-    {
-      "login": "yyx990803",
-      "avatar_url": "https://avatars.githubusercontent.com/u/499550?v=4",
       "bio": null,
-      "company": "vuejs",
-      "name": "Evan You",
-      "coordinates": {
-        "latitude": 37.724668200801624,
-        "longitude": -122.39550791680813
-      },
-      "id": 4
+      "avatarUrl": "https://avatars.githubusercontent.com/u/2894642?v=4",
+      "latitude": 37.790605642105255,
+      "longitude": -122.39324949681759
     }
   ]
 }

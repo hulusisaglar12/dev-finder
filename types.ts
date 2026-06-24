@@ -9,6 +9,7 @@ export interface Developer {
   username: string;
   name: string;
   bio: string | null;
+  avatarUrl: string;
   latitude: number;
   longitude: number;
 }
