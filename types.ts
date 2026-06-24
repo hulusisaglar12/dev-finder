@@ -5,7 +5,7 @@ export type RootStackParamList = {
 };
 
 export interface Developer {
-  id: number;
+  id: string | number;
   username: string;
   name: string;
   bio: string | null;

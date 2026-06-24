@@ -1,7 +1,7 @@
 {
   "users": [
     {
-      "id": 1,
+      "id": "1",
       "username": "torvalds",
       "name": "Linus Torvalds",
       "bio": null,
@@ -10,7 +10,7 @@
       "longitude": -122.41171214729549
     },
     {
-      "id": 2,
+      "id": "2",
       "username": "timbl",
       "name": "Tim Berners-Lee",
       "bio": null,
@@ -19,13 +19,23 @@
       "longitude": -122.39881340414287
     },
     {
-      "id": 3,
+      "id": "3",
       "username": "gvanrossum",
       "name": "Guido van Rossum",
       "bio": null,
       "avatarUrl": "https://avatars.githubusercontent.com/u/2894642?v=4",
       "latitude": 37.790605642105255,
       "longitude": -122.39324949681759
+    },
+    {
+      "username": "hulusisaglar12",
+      "name": "hulusisaglar12",
+      "bio": null,
+      "avatarUrl": "https://avatars.githubusercontent.com/u/226136467?v=4",
+      "latitude": 37.4219983,
+      "longitude": -122.084,
+      "id": "sCY8F9JIeH8"
     }
-  ]
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
 }

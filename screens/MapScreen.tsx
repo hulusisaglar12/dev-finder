@@ -29,10 +29,18 @@ export default function MapScreen({ navigation }: Props) {
 
   return (
     <View style={styles.container}>
-      <MapView style={StyleSheet.absoluteFillObject}>
+      <MapView
+        style={StyleSheet.absoluteFillObject}
+        initialRegion={{
+          latitude: 37.79,
+          longitude: -122.40,
+          latitudeDelta: 0.05,
+          longitudeDelta: 0.05,
+        }}
+      >
         {devs.map((dev) => (
           <Marker
-            key={dev.id}
+            key={String(dev.id)}
             coordinate={{ latitude: dev.latitude, longitude: dev.longitude }}
           >
             <Image source={{ uri: dev.avatarUrl }} style={styles.avatar} />
